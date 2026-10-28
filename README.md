@@ -85,7 +85,7 @@ PSNR is an image fidelity metric, not a direct measure of steganographic securit
 
 The project includes an interactive web application for encoding and decoding payloads and inspecting image characteristics.
 
-**Live demo:** [Try the application](image-steganography-pxchar.streamlit.app)
+**Live demo:** [Try the application](https://image-steganography-pxchar.streamlit.app)
 
 <img src="app_screenshot.png" alt="Application screenshot" width="50%">
 
