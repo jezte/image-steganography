@@ -22,7 +22,7 @@ UPLOADED_PATH.mkdir(parents=True, exist_ok=True)
 (STEGO_PATH.parent).mkdir(parents=True, exist_ok=True)
 (DECODED_PATH.parent).mkdir(parents=True, exist_ok=True)
 
-st.title("Steganography App")
+st.title("Image Steganography Tool")
 
 # User selects mode: Encode or Decode
 mode = st.radio("Choose Mode", ["Encode", "Decode"])

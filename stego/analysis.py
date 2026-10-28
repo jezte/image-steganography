@@ -112,7 +112,7 @@ def generate_bit_plane_diff(
         )
 
         output = output_prefix.parent / f"{output_prefix.name}.png"
-        fig.write_image(output, width=1800, height=700, scale=2)
+        fig.write_image(output, width=1400, height=700, scale=2)
 
         return fig
 
@@ -161,7 +161,7 @@ def generate_bit_plane_diff(
                 / f"{output_prefix.name}_{channel_name}.png"
             )
 
-            fig.write_image(output, width=1800, height=700, scale=2)
+            fig.write_image(output, width=1400, height=700, scale=2)
 
             figures.append(fig)
 

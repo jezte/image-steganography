@@ -50,13 +50,14 @@ def _embedding_capacity(image: np.ndarray) -> int:
 def _embedding_offset(value: int, payload_value: int, n_bits: int) -> int:
     """ Calculate the minimum wrapped modification for an n-bit value. """
     modulus = 2**n_bits
-    target = payload_value
-    current = value % modulus
-    delta = target - current
+    target = payload_value      # target is labeled with 'b' in paper
+    current = value % modulus   # value is labeled with 'g_xy' in paper
+    delta = target - current    # delta is labeled with 't_xy' in paper
 
     lower = -math.floor((modulus - 1) / 2)
     upper = math.ceil((modulus - 1) / 2)
 
+    # return value is labeled with "t'_xy" in paper
     if lower <= delta <= upper:
         return delta
     if -modulus + 1 <= delta < lower:
@@ -69,7 +70,7 @@ def _embedding_offset(value: int, payload_value: int, n_bits: int) -> int:
 
 def _apply_modification(value: int, offset: int, n_bits: int) -> int:
     """ Apply an offset while keeping the pixel in the valid 8-bit range. """
-    result = value + offset
+    result = value + offset  # result is labeled with "g*_xy" in paper
     modulus = 2**n_bits
 
     if result < 0:
@@ -86,50 +87,50 @@ def embed_message(
     *,
     marker: str = END_MARKER,
 ) -> np.ndarray:
-    """ Embed "message" into a uint8 grayscale or multi-channel image.
+    """Embed a payload into a uint8 grayscale or multi-channel image."""
 
-    Raises:
-        ValueError: if the image type/shape is invalid or the payload is too large.
-    """
     if cover.dtype != np.uint8:
         raise ValueError("Cover image must have dtype uint8.")
 
     if cover.ndim not in (2, 3):
-        raise ValueError("Cover image must be grayscale (2D) or multi-channel (3D).")
-
-    bits = _message_to_bits(message, marker)
-    capacity = _embedding_capacity(cover)
-
-    if len(bits) > capacity:
-        available_payload_bits = max(0, capacity - len(marker.encode("utf-8")) * 8)
         raise ValueError(
-            f"Message is too large: {len(bits)} bits required, "
-            f"but only {capacity} bits are available "
-            f"(about {available_payload_bits // 8} payload bytes)."
+            "Cover image must be grayscale (2D) or multi-channel (3D)."
         )
 
+    bits = _message_to_bits(message, marker)
     stego = cover.astype(np.int16, copy=True)
     bit_index = 0
 
     for center, neighborhood in _iter_blocks(stego):
-        n_bits = _capacity_bits(neighborhood)
-
         if bit_index >= len(bits):
             break
 
-        chunk = bits[bit_index:bit_index+n_bits]
-
-        chunk = chunk.ljust(n_bits, "0")
+        n_bits = _capacity_bits(neighborhood)
+        chunk = bits[bit_index:bit_index + n_bits].ljust(n_bits, "0")
         payload_value = int(chunk, 2)
 
         current_value = int(stego[center])
         offset = _embedding_offset(current_value, payload_value, n_bits)
-        stego[center] = _apply_modification(current_value, offset, n_bits)
+        stego[center] = _apply_modification(
+            current_value, offset, n_bits
+        )
 
         bit_index += n_bits
 
     if bit_index < len(bits):
-        raise RuntimeError("Embedding stopped before the complete payload was written.")
+        available_bits = bit_index
+        required_bits = len(bits)
+        available_payload_bytes = max(
+            0, (available_bits - len(marker.encode("utf-8"))) // 8
+        )
+
+        raise ValueError(
+            f"Message is too large: {required_bits} bits required, "
+            f"but embedding ran out of space after processing "
+            f"{available_bits} bits. "
+            f"Approximately {available_payload_bytes} payload bytes "
+            f"could fit with this embedding sequence."
+        )
 
     return stego.astype(np.uint8)
 
@@ -166,7 +167,6 @@ def extract_message(
 
     payload_bits = bit_stream[:marker_position]
 
-    # The original algorithm stores bytes, so the payload must be byte-aligned.
     if len(payload_bits) % 8 != 0:
         raise ValueError("Extracted payload is not byte-aligned.")
 

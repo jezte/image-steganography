@@ -17,12 +17,12 @@ INPUT_DIR = DATA_DIR / "input"
 OUTPUT_DIR = DATA_DIR / "output"
 
 COVER_PATH = INPUT_DIR / "images" / "lena.png"
-PAYLOAD_PATH = INPUT_DIR / "images" / "QR_code.png"
+PAYLOAD_PATH = INPUT_DIR / "random_bytes" / "random_bytes_lena.bin"
 
 STEGO_PATH = OUTPUT_DIR / "encoded" / "stego_image.png"
 DECODED_PATH = OUTPUT_DIR / "decoded" / "decoding_result"
 HISTOGRAM_PATH = OUTPUT_DIR / "histograms" / "histogram.png"
-BIT_PLANE_PREFIX = OUTPUT_DIR / "bit_planes" / "lena"
+BIT_PLANE_PREFIX = OUTPUT_DIR / "bit_planes" / "bit_plane"
 
 
 def main() -> None:
