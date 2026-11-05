@@ -131,6 +131,6 @@ streamlit run app.py
 
 ## Reference
 
-Park, Y.-R., Kang, H.-H., Shin, S.-U., & Kwon, K.-R. (2005). *An Image Steganography Using Pixel Characteristics.* In **Computational Intelligence and Security**, Lecture Notes in Computer Science, vol. 3802, pp. 581–588. Springer.
+Park, Y.-R., Kang, H.-H., Shin, S.-U., & Kwon, K.-R. (2005). [*An Image Steganography Using Pixel Characteristics*](https://link.springer.com/chapter/10.1007/11596981_86). In **Computational Intelligence and Security**, Lecture Notes in Computer Science, vol. 3802, pp. 581–588. Springer.
 
 The algorithm implemented in this repository is based on the cited publication. This repository is an independent implementation and is not an official implementation by the paper's authors.
